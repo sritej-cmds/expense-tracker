@@ -30,25 +30,25 @@ export default function Groups() {
 
   return (
     <div className="page">
-      <h2>Your groups</h2>
+      <h2>your squads 🐍</h2>
 
       <div className="card">
         <form onSubmit={handleCreate}>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="New group name"
+            placeholder="squad name"
           />
-          <button type="submit">Create group</button>
+          <button type="submit">start a squad</button>
         </form>
       </div>
 
       {error && <p className="error">{error}</p>}
 
       {loading ? (
-        <p className="empty-state">Loading groups…</p>
+        <p className="empty-state">loading your squads…</p>
       ) : groups.length === 0 ? (
-        <p className="empty-state">No groups yet — create one above to get started.</p>
+        <p className="empty-state">no squads yet — start one up there ☝️</p>
       ) : (
         <ul className="list">
           {groups.map((g) => (

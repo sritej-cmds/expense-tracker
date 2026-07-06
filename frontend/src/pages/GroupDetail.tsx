@@ -23,7 +23,7 @@ export default function GroupDetail() {
 
   function nameFor(userId: number) {
     const member = group?.members?.find((m) => m.id === userId);
-    return member ? member.name : `User ${userId}`;
+    return member ? member.name : `user ${userId}`;
   }
 
   async function loadAll() {
@@ -94,7 +94,7 @@ export default function GroupDetail() {
   if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">Loading group…</p>
+        <p className="empty-state">loading the squad…</p>
       </div>
     );
   }
@@ -105,7 +105,7 @@ export default function GroupDetail() {
 
       {actionError && <p className="error">{actionError}</p>}
 
-      <h3>Members</h3>
+      <h3>the crew 👯</h3>
       <div className="card">
         {group?.members && group.members.length > 0 ? (
           <ul className="list">
@@ -117,47 +117,47 @@ export default function GroupDetail() {
             ))}
           </ul>
         ) : (
-          <p className="empty-state">No members yet.</p>
+          <p className="empty-state">nobody's here yet.</p>
         )}
         <form onSubmit={handleAddMember} style={{ marginTop: "1rem" }}>
           <input
             value={newMemberId}
             onChange={(e) => setNewMemberId(e.target.value)}
-            placeholder="User ID to add"
+            placeholder="user id to add"
             type="number"
           />
-          <button type="submit">Add member</button>
+          <button type="submit">add to crew</button>
         </form>
       </div>
 
-      <h3>Add an expense</h3>
+      <h3>add the damage 💸</h3>
       <div className="card">
         <form onSubmit={handleAddExpense}>
           <input
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Description"
+            placeholder="what was it"
           />
           <input
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            placeholder="Amount"
+            placeholder="how much"
             type="number"
           />
-          <button type="submit">Add expense</button>
+          <button type="submit">log it</button>
         </form>
       </div>
 
-      <h3>Expenses</h3>
+      <h3>the damage so far</h3>
       {expenses.length === 0 ? (
-        <p className="empty-state">No expenses yet.</p>
+        <p className="empty-state">nothing logged yet, we broke or fine? 👀</p>
       ) : (
         <ul className="list">
           {expenses.map((e) => (
             <li key={e.id}>
               <span>
                 {e.description}{" "}
-                <span className="empty-state">— paid by {nameFor(e.paid_by)}</span>
+                <span className="empty-state">— {nameFor(e.paid_by)} paid</span>
               </span>
               <span className="amount">Rs.{e.amount}</span>
             </li>
@@ -165,9 +165,9 @@ export default function GroupDetail() {
         </ul>
       )}
 
-      <h3>Balances</h3>
+      <h3>the tea ☕</h3>
       {balances.length === 0 ? (
-        <p className="empty-state">Everyone's settled up.</p>
+        <p className="empty-state">everyone's square, no cap ✅</p>
       ) : (
         <ul className="list">
           {balances.map((b, i) => (
@@ -181,22 +181,22 @@ export default function GroupDetail() {
         </ul>
       )}
 
-      <h3>Settle up</h3>
+      <h3>squash the beef</h3>
       <div className="card">
         <form onSubmit={handleSettleUp}>
           <input
             value={settleTo}
             onChange={(e) => setSettleTo(e.target.value)}
-            placeholder="Paid to (user ID)"
+            placeholder="pay who (user id)"
             type="number"
           />
           <input
             value={settleAmount}
             onChange={(e) => setSettleAmount(e.target.value)}
-            placeholder="Amount"
+            placeholder="how much"
             type="number"
           />
-          <button type="submit">Record settlement</button>
+          <button type="submit">pay up</button>
         </form>
       </div>
     </div>
