@@ -4,6 +4,21 @@ function getToken() {
   return localStorage.getItem("token");
 }
 
+function formatError(err: unknown): string {
+  const e = err as { detail?: unknown };
+  if (!e || e.detail == null) return "Request failed";
+  if (typeof e.detail === "string") return e.detail;
+  if (Array.isArray(e.detail)) {
+    return e.detail
+      .map((item) => {
+        const loc = Array.isArray(item?.loc) ? item.loc[item.loc.length - 1] : "field";
+        return `${loc}: ${item?.msg ?? "invalid"}`;
+      })
+      .join("; ");
+  }
+  return "Request failed";
+}
+
 async function request(path: string, options: RequestInit = {}) {
   const token = getToken();
   const res = await fetch(`${BASE_URL}${path}`, {
@@ -17,7 +32,7 @@ async function request(path: string, options: RequestInit = {}) {
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }));
-    throw new Error(err.detail || "Request failed");
+    throw new Error(formatError(err));
   }
 
   return res.json();
@@ -38,7 +53,7 @@ export const api = {
     }).then(async (res) => {
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: res.statusText }));
-        throw new Error(err.detail || "Login failed");
+        throw new Error(formatError(err));
       }
       return res.json();
     });
@@ -46,6 +61,8 @@ export const api = {
 
   createGroup: (name: string) =>
     request("/groups", { method: "POST", body: JSON.stringify({ name }) }),
+
+  listGroups: () => request("/groups"),
 
   getGroup: (id: number) => request(`/groups/${id}`),
 
