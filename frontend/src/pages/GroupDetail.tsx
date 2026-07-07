@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../api/client";
-import type { Expense, BalanceEntry, Group } from "../types";
+import type { Expense, BalanceEntry, Group, User } from "../types";
 
 export default function GroupDetail() {
   const { groupId } = useParams();
@@ -16,7 +16,9 @@ export default function GroupDetail() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
 
-  const [newMemberId, setNewMemberId] = useState("");
+  const [memberSearch, setMemberSearch] = useState("");
+  const [memberResults, setMemberResults] = useState<User[]>([]);
+  const [selectedMemberId, setSelectedMemberId] = useState<number | null>(null);
 
   const [settleTo, setSettleTo] = useState("");
   const [settleAmount, setSettleAmount] = useState("");
@@ -44,6 +46,20 @@ export default function GroupDetail() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
+  useEffect(() => {
+    if (memberSearch.trim().length === 0) {
+      setMemberResults([]);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      api
+        .listUsers(memberSearch)
+        .then(setMemberResults)
+        .catch(() => setMemberResults([]));
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [memberSearch]);
+
   async function handleAddExpense(e: React.FormEvent) {
     e.preventDefault();
     setActionError("");
@@ -66,9 +82,15 @@ export default function GroupDetail() {
   async function handleAddMember(e: React.FormEvent) {
     e.preventDefault();
     setActionError("");
+    if (selectedMemberId === null) {
+      setActionError("pick someone from the search results first");
+      return;
+    }
     try {
-      await api.addMember(id, Number(newMemberId));
-      setNewMemberId("");
+      await api.addMember(id, selectedMemberId);
+      setMemberSearch("");
+      setMemberResults([]);
+      setSelectedMemberId(null);
       loadAll();
     } catch (err) {
       setActionError((err as Error).message);
@@ -94,7 +116,7 @@ export default function GroupDetail() {
   if (loading) {
     return (
       <div className="page">
-        <p className="empty-state">loading the squad…</p>
+        <p className="empty-state">loading the squad...</p>
       </div>
     );
   }
@@ -105,7 +127,7 @@ export default function GroupDetail() {
 
       {actionError && <p className="error">{actionError}</p>}
 
-      <h3>the crew 👯</h3>
+      <h3>the crew</h3>
       <div className="card">
         {group?.members && group.members.length > 0 ? (
           <ul className="list">
@@ -119,18 +141,39 @@ export default function GroupDetail() {
         ) : (
           <p className="empty-state">nobody's here yet.</p>
         )}
+
         <form onSubmit={handleAddMember} style={{ marginTop: "1rem" }}>
           <input
-            value={newMemberId}
-            onChange={(e) => setNewMemberId(e.target.value)}
-            placeholder="user id to add"
-            type="number"
+            value={memberSearch}
+            onChange={(e) => {
+              setMemberSearch(e.target.value);
+              setSelectedMemberId(null);
+            }}
+            placeholder="search by name or email"
           />
+          {memberResults.length > 0 && selectedMemberId === null && (
+            <ul className="list">
+              {memberResults.map((u) => (
+                <li
+                  key={u.id}
+                  onClick={() => {
+                    setSelectedMemberId(u.id);
+                    setMemberSearch(`${u.name} (${u.email})`);
+                    setMemberResults([]);
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <span>{u.name}</span>
+                  <span className="empty-state">{u.email}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <button type="submit">add to crew</button>
         </form>
       </div>
 
-      <h3>add the damage 💸</h3>
+      <h3>add the damage</h3>
       <div className="card">
         <form onSubmit={handleAddExpense}>
           <input
@@ -150,7 +193,7 @@ export default function GroupDetail() {
 
       <h3>the damage so far</h3>
       {expenses.length === 0 ? (
-        <p className="empty-state">nothing logged yet, we broke or fine? 👀</p>
+        <p className="empty-state">nothing logged yet, we broke or fine?</p>
       ) : (
         <ul className="list">
           {expenses.map((e) => (
@@ -165,9 +208,9 @@ export default function GroupDetail() {
         </ul>
       )}
 
-      <h3>the tea ☕</h3>
+      <h3>the tea</h3>
       {balances.length === 0 ? (
-        <p className="empty-state">everyone's square, no cap ✅</p>
+        <p className="empty-state">everyone's square, no cap</p>
       ) : (
         <ul className="list">
           {balances.map((b, i) => (
@@ -184,12 +227,17 @@ export default function GroupDetail() {
       <h3>squash the beef</h3>
       <div className="card">
         <form onSubmit={handleSettleUp}>
-          <input
+          <select
             value={settleTo}
             onChange={(e) => setSettleTo(e.target.value)}
-            placeholder="pay who (user id)"
-            type="number"
-          />
+          >
+            <option value="">pay who?</option>
+            {(group?.members || []).map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name} ({m.email})
+              </option>
+            ))}
+          </select>
           <input
             value={settleAmount}
             onChange={(e) => setSettleAmount(e.target.value)}
