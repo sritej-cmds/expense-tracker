@@ -243,7 +243,9 @@ export default function GroupDetail() {
             onChange={(e) => setSettleAmount(e.target.value)}
             placeholder="how much"
             type="number"
-          />
+            step="0.01"
+            min="0.01"
+/>
           <button type="submit">pay up</button>
         </form>
       </div>
