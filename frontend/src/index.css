@@ -231,3 +231,39 @@ button[type="submit"]:active, .btn:active {
   font-weight: 500;
   padding: 0.5rem 0;
 }
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background: var(--surface);
+  border-bottom: 3px solid var(--border);
+  margin-bottom: 1rem;
+}
+
+.topbar-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.topbar-links a {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.topbar-links a:hover {
+  color: var(--accent);
+}
+
+.logout-btn {
+  background: var(--owe-soft);
+  padding: 0.5rem 1.1rem;
+}
+
+.logout-btn:hover {
+  background: var(--owe);
+  color: white;
+}

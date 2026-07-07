@@ -65,6 +65,9 @@ export const api = {
 
   listGroups: () => request("/groups"),
 
+  listUsers: (search?: string) =>
+    request(`/users${search ? `?search=${encodeURIComponent(search)}` : ""}`),
+
   getGroup: (id: number) => request(`/groups/${id}`),
 
   addMember: (groupId: number, userId: number) =>
