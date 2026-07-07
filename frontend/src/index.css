@@ -267,3 +267,37 @@ button[type="submit"]:active, .btn:active {
   background: var(--owe);
   color: white;
 }
+
+.hint {
+  font-size: 0.85rem;
+  margin: -0.5rem 0 0.75rem 0.25rem;
+}
+
+.password-hints {
+  list-style: none;
+  padding: 0;
+  margin: -0.5rem 0 0.75rem 0.25rem;
+  font-size: 0.85rem;
+}
+
+.password-hints li {
+  margin-bottom: 0.15rem;
+}
+
+.hint-ok {
+  color: var(--accent-2);
+}
+
+.hint-ok::before {
+  content: "\2713  ";
+  font-weight: 700;
+}
+
+.hint-bad {
+  color: var(--owe);
+}
+
+.hint-bad::before {
+  content: "\2717  ";
+  font-weight: 700;
+}
