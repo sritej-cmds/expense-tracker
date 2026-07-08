@@ -180,7 +180,7 @@ function prefillSettle(toUserId: number, amount: number) {
         </form>
       </div>
 
-      <h3>add the damage</h3>
+      <h3>add expense</h3>
       <div className="card">
         <form onSubmit={handleAddExpense}>
           <input
@@ -198,9 +198,9 @@ function prefillSettle(toUserId: number, amount: number) {
         </form>
       </div>
 
-      <h3>the damage so far</h3>
+      <h3>activity</h3>
       {expenses.length === 0 ? (
-        <p className="empty-state">nothing logged yet, we broke or fine?</p>
+        <p className="empty-state">nothing logged yet</p>
       ) : (
         <ul className="list">
           {expenses.map((e) => (
@@ -215,9 +215,9 @@ function prefillSettle(toUserId: number, amount: number) {
         </ul>
       )}
 
-      <h3>the tea</h3>
+      <h3>balances</h3>
       {balances.length === 0 ? (
-        <p className="empty-state">everyone's square, no cap</p>
+        <p className="empty-state">everyone's square</p>
       ) : (
         <ul className="list">
   {balances.map((b, i) => (
@@ -239,8 +239,9 @@ function prefillSettle(toUserId: number, amount: number) {
 </ul>
       )}
 
-      <h3>squash the beef</h3>
-      <div className="card" ref={settleFormRef}>
+      <h3>settle up</h3>
+       <div className="card" ref={settleFormRef}>
+
         <form onSubmit={handleSettleUp}>
           <select
             value={settleTo}

@@ -10,6 +10,7 @@ export default function UserLookup() {
 
   useEffect(() => {
     const query = search.trim();
+    console.log("UserLookup search =", `"${query}"`);
 
     if (!query) {
       setUsers([]);
