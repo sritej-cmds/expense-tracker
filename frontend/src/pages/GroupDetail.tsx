@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../api/client";
 import type { Expense, BalanceEntry, Group, User } from "../types";
@@ -22,6 +22,13 @@ export default function GroupDetail() {
 
   const [settleTo, setSettleTo] = useState("");
   const [settleAmount, setSettleAmount] = useState("");
+  const settleFormRef = useRef<HTMLDivElement>(null);
+
+function prefillSettle(toUserId: number, amount: number) {
+  setSettleTo(String(toUserId));
+  setSettleAmount(String(amount));
+  settleFormRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
 
   function nameFor(userId: number) {
     const member = group?.members?.find((m) => m.id === userId);
@@ -213,19 +220,28 @@ export default function GroupDetail() {
         <p className="empty-state">everyone's square</p>
       ) : (
         <ul className="list">
-          {balances.map((b, i) => (
-            <li key={i}>
-              <span>
-                {nameFor(b.from_user)} owes {nameFor(b.to_user)}
-              </span>
-              <span className="amount you-owe">Rs.{b.amount}</span>
-            </li>
-          ))}
-        </ul>
+  {balances.map((b, i) => (
+    <li key={i}>
+      <span>
+        {nameFor(b.from_user)} owes {nameFor(b.to_user)}
+      </span>
+      <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <span className="amount you-owe">Rs.{b.amount}</span>
+        <button
+          type="button"
+          onClick={() => prefillSettle(b.to_user, b.amount)}
+        >
+          settle up
+        </button>
+      </span>
+    </li>
+  ))}
+</ul>
       )}
 
       <h3>settle up</h3>
-      <div className="card">
+       <div className="card" ref={settleFormRef}>
+
         <form onSubmit={handleSettleUp}>
           <select
             value={settleTo}
