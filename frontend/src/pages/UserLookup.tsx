@@ -5,14 +5,24 @@ import type { User } from "../types";
 export default function UserLookup() {
   const [users, setUsers] = useState<User[]>([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    const query = search.trim();
+
+    if (!query) {
+      setUsers([]);
+      setLoading(false);
+      setError("");
+      return;
+    }
+
     setLoading(true);
     setError("");
+
     api
-      .listUsers(search || undefined)
+      .listUsers(query)
       .then(setUsers)
       .catch((err) => setError((err as Error).message))
       .finally(() => setLoading(false));
@@ -32,10 +42,12 @@ export default function UserLookup() {
 
       {error && <p className="error">{error}</p>}
 
-      {loading ? (
+      {search.trim() === "" ? null : loading ? (
         <p className="empty-state">looking around...</p>
       ) : users.length === 0 ? (
-        <p className="empty-state">no one matches that - try a different search</p>
+        <p className="empty-state">
+          no one matches that - try a different search
+        </p>
       ) : (
         <ul className="list">
           {users.map((u) => (
@@ -45,6 +57,7 @@ export default function UserLookup() {
                 <br />
                 <span className="empty-state">{u.email}</span>
               </div>
+
               <span className="amount">#{u.id}</span>
             </li>
           ))}
